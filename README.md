@@ -21,13 +21,13 @@ input -> number of pods
 ```
 docker build ./flask-api -t flask-api
 ```
-- The manifest to deploy our flask application on kubernetes is at `./applications/flask-api.yml`. It contains the following resources
+- The manifest to deploy our flask application on kubernetes is at `./manifests/flask-api.yml`. It contains the following resources
     - Deployment
     - Load Balancer Service
     - HorizontalPodAutoscaler with `minReplicas` as 1 and `maxReplicas` as 10. Average utilization of CPU is kept at 10% for testing purpose.
 - To apply the manifest, run the following command
 ```
-kubectl apply -f ./applications/flask-api.yml
+kubectl apply -f ./manifests/flask-api.yml
 ```
 
 ## Script

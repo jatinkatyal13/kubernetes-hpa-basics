@@ -37,7 +37,7 @@ main() {
     errorExit "Please specify deployment name and number of pods to replicate"
   fi
 
-  read -r hpa minReplicas maxReplicas <<< $(kubectl get hpa -o=jsonpath="{.items[?(@.spec.scaleTargetRef.name=='$DEPLOYMENT_NAME')]['metadata.name', 'spec.minReplicas', 'spec.maxReplicas']"})
+  read -r hpa minReplicas maxReplicas <<< $(kubectl get hpa -o=jsonpath="{.items[?(@.spec.scaleTargetRef.name=='$DEPLOYMENT_NAME')]['metadata.name', 'spec.minReplicas', 'spec.maxReplicas']}")
 
   patchHpa $(($maxReplicas - $minReplicas))
 }
