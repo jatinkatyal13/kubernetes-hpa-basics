@@ -4,7 +4,7 @@ metadata:
   labels:
     k8s-app: metrics-server
   name: metrics-server
-  namespace: kube-system
+  namespace: metrics-server
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -44,6 +44,9 @@ rules:
   resources:
   - pods
   - nodes
+  - nodes/stats
+  - namespaces
+  - configmaps
   verbs:
   - get
   - list
@@ -55,7 +58,7 @@ metadata:
   labels:
     k8s-app: metrics-server
   name: metrics-server-auth-reader
-  namespace: kube-system
+  namespace: metrics-server
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: Role
@@ -63,7 +66,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: metrics-server
-  namespace: kube-system
+  namespace: metrics-server
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -78,7 +81,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: metrics-server
-  namespace: kube-system
+  namespace: metrics-server
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -93,7 +96,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: metrics-server
-  namespace: kube-system
+  namespace: metrics-server
 ---
 apiVersion: v1
 kind: Service
@@ -101,7 +104,7 @@ metadata:
   labels:
     k8s-app: metrics-server
   name: metrics-server
-  namespace: kube-system
+  namespace: metrics-server
 spec:
   ports:
   - name: https
@@ -117,7 +120,7 @@ metadata:
   labels:
     k8s-app: metrics-server
   name: metrics-server
-  namespace: kube-system
+  namespace: metrics-server
 spec:
   selector:
     matchLabels:
@@ -134,10 +137,10 @@ spec:
       - args:
         - --cert-dir=/tmp
         - --secure-port=4443
-        - --kubelet-insecure-tls
         - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
         - --kubelet-use-node-status-port
-        - --metric-resolution=15s
+        - --metric-resolution=40s
+        - --kubelet-insecure-tls
         image: k8s.gcr.io/metrics-server/metrics-server:v0.6.2
         imagePullPolicy: IfNotPresent
         livenessProbe:
@@ -192,6 +195,6 @@ spec:
   insecureSkipTLSVerify: true
   service:
     name: metrics-server
-    namespace: kube-system
+    namespace: metrics-server
   version: v1beta1
   versionPriority: 100
